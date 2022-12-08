@@ -7,10 +7,6 @@ import {useAppSelector} from './hooks';
 function App() {
   const navigate = useNavigate();
   const sessionState = useAppSelector((state) => state.sessionState);
-  console.log(sessionState);
-  // sessionService.loadSession()
-  //   .then(currentSession => console.log(currentSession))
-  //   .catch(err => console.log(err));
   
   return (
     <div className="App">

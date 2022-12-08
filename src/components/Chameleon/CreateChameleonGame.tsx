@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useState, useEffect} from 'react';
 import {useAppDispatch} from '../../hooks';
-import {setCurrentPlayer} from './ChameleonSlice';
+import {createGameAsync,  setCurrentPlayer} from './ChameleonSlice';
 import { useNavigate } from "react-router-dom";
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useAppSelector } from '../../hooks';
@@ -45,6 +45,11 @@ export default function CreateChameleonGame() {
 
     const onCreateGameClick = () => {
         dispatch(setCurrentPlayer(displayName));
+        if (readyState === ReadyState.OPEN) {
+            dispatch(createGameAsync({displayName, sessionId: sessionState.sessionId}));
+        } else {
+            console.log('websocket not ready');
+        }
         navigate("/chameleon/lobby");
     };
 
@@ -57,3 +62,5 @@ export default function CreateChameleonGame() {
         </div>
     );
 }
+
+// Need to send the call to actually create the game now and then implement the join game features.

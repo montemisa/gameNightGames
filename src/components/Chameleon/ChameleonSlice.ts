@@ -1,29 +1,75 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { LoadState } from '../../types';
+import { LoadState, GameStatus,  PlayerInfo, JoinGameRequest } from '../../types';
+import { createGame, joinGame } from '../../api/chameleonGame';
 
 
 interface ChameleonState {
-    loadState: LoadState,
-    gameStatus: string,
-    players: Array<string>,
+    gameStatus: GameStatus,
     currentPlayer: string,
+    loadState: LoadState,
+    gameId: string,
+    playerNames: Array<string>,
+    host: string,
 };
 
 const initialState: ChameleonState  = {
     loadState: LoadState.INIT,
-    gameStatus: "INIT",
-    players: [],
+    gameStatus:  GameStatus.UNKNOWN,
     currentPlayer: '',
+    gameId: '',
+    playerNames: [],
+    host: '',
+    
 };
 
+export const createGameAsync = createAsyncThunk(
+    'chameleonGameState/createGame',
+    async (playerInfo: PlayerInfo) => {
+      const response = await createGame(playerInfo.sessionId,  playerInfo.displayName);
+      return response;
+    }
+);
+
+export const joinGameAsync = createAsyncThunk(
+    'chameleonGameState/joinGame',
+    async (req: JoinGameRequest) => {
+        const resp = await joinGame(req.sessionId, req.displayName);
+        return resp;
+    }
+);
+
 export const chameleonSlice = createSlice({
-    name: 'ChameleonState',
+    name: 'chameleonState',
     initialState,
     reducers: {
         setCurrentPlayer: (state, action) => {
             state.currentPlayer = action.payload;
         },
     },
+    extraReducers: (builder) => {
+        builder
+          .addCase(createGameAsync.pending, (state) => {
+            state.loadState = LoadState.LOADING;
+          })
+          .addCase(createGameAsync.fulfilled, (state, action) => {
+            state.loadState = LoadState.LOADED;
+            state.gameId = action.payload.gameId;
+            state.gameStatus = GameStatus.LOBBY;
+            state.playerNames = action.payload.connectedPlayers.map((p: any) => p.displayName);
+          })
+          .addCase(createGameAsync.rejected, (state, action) => {
+            state.loadState = LoadState.ERROR;
+          })
+          .addCase(joinGameAsync.pending, (state) => {
+            state.loadState = LoadState.LOADING;
+          })
+          .addCase(joinGameAsync.fulfilled, (state, action) => {
+            state.loadState = LoadState.LOADED;
+          })
+          .addCase(joinGameAsync.rejected, (state, action) => {
+            state.loadState = LoadState.ERROR;
+          });
+      },
 });
 
 export const { setCurrentPlayer } = chameleonSlice.actions;
