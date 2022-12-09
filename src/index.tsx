@@ -7,6 +7,7 @@ import CreateChameleonGame from './components/Chameleon/CreateChameleonGame';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import  store  from './store';
+import SocketHandler from './components/SocketHandler'
 
 import {
   createBrowserRouter,
@@ -40,6 +41,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
+      <SocketHandler />
       <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>

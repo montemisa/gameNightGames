@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { LoadState } from '../types';
 import { createSession, validateSession } from '../api/sessions';
+import { ReadyState } from 'react-use-websocket';
 
 
 interface SessionState {
@@ -9,6 +10,8 @@ interface SessionState {
     valid: boolean,
     user: string,
     sessionId: string,
+    socketNeeded: boolean,
+    socketState: ReadyState,
 };
 
 const initialState: SessionState  = {
@@ -17,6 +20,8 @@ const initialState: SessionState  = {
     valid: false,
     user: '',
     sessionId: '',
+    socketNeeded: false,
+    socketState: ReadyState.UNINSTANTIATED,
 };
 
 
@@ -47,12 +52,18 @@ export const sessionSlice = createSlice({
     initialState,
     reducers: {
         setSessionChecked: (state) => {
-            state.checked = true;
+          state.checked = true;
         },
         setSessionId: (state, action) => {
-            state.checked = true;
-            state.sessionId = action.payload;
-        }
+          state.checked = true;
+          state.sessionId = action.payload;
+        },
+        setSocketNeeded: (state, action) => {
+          state.socketNeeded = action.payload;
+        },
+        setSocketState: (state, action) => {
+          state.socketState = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -91,7 +102,12 @@ export const sessionSlice = createSlice({
       },
 });
 
-export const { setSessionChecked, setSessionId } = sessionSlice.actions;
+export const { 
+  setSessionChecked, 
+  setSessionId,  
+  setSocketNeeded, 
+  setSocketState 
+} = sessionSlice.actions;
 
 export default sessionSlice.reducer;
 
