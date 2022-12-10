@@ -33,12 +33,13 @@ export default function ChameleonLobby() {
 
     return (
         <div className="App">
-            <h1>Hello {state.currentPlayer} Waiting for other players</h1>
+            <h1>Hello {state.currentPlayer}</h1>
+            <div>{state.isHost ? <span>Click start game when ready</span> : <span>Waiting for host to start the game</span>}</div>
             <span>The WebSocket is currently {CONNECTION_READY_STATE_DESCRIPTIONS[sessionState.socketState]}</span>
             <div>Invite others using this link <a>gameNightgames.xyz/{state.gameId}</a></div>
             <h3>Connected players</h3>
             <ul>{state.playerNames.map(pn => <li key={pn}>{pn}</li>)}</ul>
-            <button>Start game</button>
+            {state.isHost &&<button>Start game</button>}
         </div>
     );
 }

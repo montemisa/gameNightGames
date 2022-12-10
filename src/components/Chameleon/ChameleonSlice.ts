@@ -9,7 +9,7 @@ interface ChameleonState {
     loadState: LoadState,
     gameId: string,
     playerNames: Array<string>,
-    host: string,
+    isHost: boolean,
 };
 
 const initialState: ChameleonState  = {
@@ -18,7 +18,7 @@ const initialState: ChameleonState  = {
     currentPlayer: '',
     gameId: '',
     playerNames: [],
-    host: '',
+    isHost: false,
     
 };
 
@@ -48,6 +48,7 @@ export const chameleonSlice = createSlice({
         handleGameUpdate: (state, action) => {
           state.playerNames = action.payload.connectedPlayers.map((cp: any) => cp.displayName);
           state.gameId = action.payload.gameId;
+          state.isHost = action.payload.connectedPlayers.some((cp:  any) => cp.displayName === state.currentPlayer && cp.isHost)
         },
         setGameId: (state, action) => {
           state.gameId = action.payload;
@@ -62,6 +63,7 @@ export const chameleonSlice = createSlice({
             state.loadState = LoadState.LOADED;
             state.gameId = action.payload.gameId;
             state.gameStatus = GameStatus.LOBBY;
+            state.isHost = true;
             state.playerNames = action.payload.connectedPlayers.map((p: any) => p.displayName);
           })
           .addCase(createGameAsync.rejected, (state, action) => {
