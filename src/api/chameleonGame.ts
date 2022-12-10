@@ -22,4 +22,15 @@ export const joinGame = async (sessionId: string, gameId: string, displayName: s
         console.log(e);
         return {};
     }
+} 
+
+export const startGame = async (sessionId:string, gameId: string) => {
+    try {
+        const resp = await axios.post(BASE_URL + '/startGame', {sessionId, gameId});
+        console.log(resp);
+        return resp.data;
+    } catch(e) {
+        console.log(e);
+        return {};
+    }
 }

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { LoadState, GameStatus,  PlayerInfo, JoinGameRequest } from '../../types';
-import { createGame, joinGame } from '../../api/chameleonGame';
+import { createGame, joinGame, startGame } from '../../api/chameleonGame';
 
 
 interface ChameleonState {
@@ -10,6 +10,7 @@ interface ChameleonState {
     gameId: string,
     playerNames: Array<string>,
     isHost: boolean,
+    assignedWord: string,
 };
 
 const initialState: ChameleonState  = {
@@ -19,7 +20,7 @@ const initialState: ChameleonState  = {
     gameId: '',
     playerNames: [],
     isHost: false,
-    
+    assignedWord: '',
 };
 
 export const createGameAsync = createAsyncThunk(
@@ -38,6 +39,27 @@ export const joinGameAsync = createAsyncThunk(
     }
 );
 
+export const startGameAsync = createAsyncThunk(
+  'chameleonGameState/startGame',
+  async (req: {sessionId: string, gameId: string}) => {
+      const resp = await startGame(req.sessionId, req.gameId);
+      return resp;
+  }
+);
+
+const onGameUpdate = (state: any, action: { payload: any; type: string; }) => {
+  if (action.payload.messageType === 1 ) { // game started
+    state.gameStatus = GameStatus.STARTED;
+    state.assignedWord = action.payload.word;
+  } else if (action.payload.messageType === 2) {
+    state.playerNames = action.payload.connectedPlayers.map((cp: any) => cp.displayName);
+    state.gameId = action.payload.gameId;
+    state.isHost = action.payload.connectedPlayers.some((cp:  any) => cp.displayName === state.currentPlayer && cp.isHost)
+  } else {
+    console.log("Unrecognized messageType ", action.payload.messageType);
+  }
+}
+
 export const chameleonSlice = createSlice({
     name: 'chameleonState',
     initialState,
@@ -45,11 +67,7 @@ export const chameleonSlice = createSlice({
         setCurrentPlayer: (state, action) => {
             state.currentPlayer = action.payload;
         },
-        handleGameUpdate: (state, action) => {
-          state.playerNames = action.payload.connectedPlayers.map((cp: any) => cp.displayName);
-          state.gameId = action.payload.gameId;
-          state.isHost = action.payload.connectedPlayers.some((cp:  any) => cp.displayName === state.currentPlayer && cp.isHost)
-        },
+        handleGameUpdate: onGameUpdate,
         setGameId: (state, action) => {
           state.gameId = action.payload;
         },
@@ -76,6 +94,15 @@ export const chameleonSlice = createSlice({
             state.loadState = LoadState.LOADED;
           })
           .addCase(joinGameAsync.rejected, (state, action) => {
+            state.loadState = LoadState.ERROR;
+          })
+          .addCase(startGameAsync.pending, (state) => {
+            state.loadState = LoadState.LOADING;
+          })
+          .addCase(startGameAsync.fulfilled, (state, action) => {
+            state.loadState = LoadState.LOADED;
+          })
+          .addCase(startGameAsync.rejected, (state, action) => {
             state.loadState = LoadState.ERROR;
           });
       },

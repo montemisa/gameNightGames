@@ -8,6 +8,7 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import  store  from './store';
 import SocketHandler from './components/SocketHandler'
+import ChameleonGamePlay from './components/Chameleon/ChameleonGamePlay';
 
 import {
   createBrowserRouter,
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "chameleon/lobby",
     element: <ChameleonLobby />
+  },
+  {
+    path: "chameleon/play",
+    element: <ChameleonGamePlay />
   }
 ]);
 
