@@ -33,7 +33,7 @@ export const createGameAsync = createAsyncThunk(
 export const joinGameAsync = createAsyncThunk(
     'chameleonGameState/joinGame',
     async (req: JoinGameRequest) => {
-        const resp = await joinGame(req.sessionId, req.displayName);
+        const resp = await joinGame(req.sessionId, req.gameId, req.displayName);
         return resp;
     }
 );
@@ -44,6 +44,13 @@ export const chameleonSlice = createSlice({
     reducers: {
         setCurrentPlayer: (state, action) => {
             state.currentPlayer = action.payload;
+        },
+        handleGameUpdate: (state, action) => {
+          state.playerNames = action.payload.connectedPlayers.map((cp: any) => cp.displayName);
+          state.gameId = action.payload.gameId;
+        },
+        setGameId: (state, action) => {
+          state.gameId = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -72,6 +79,6 @@ export const chameleonSlice = createSlice({
       },
 });
 
-export const { setCurrentPlayer } = chameleonSlice.actions;
+export const { setCurrentPlayer, handleGameUpdate, setGameId } = chameleonSlice.actions;
 
 export default chameleonSlice.reducer;

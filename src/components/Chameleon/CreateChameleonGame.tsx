@@ -24,10 +24,10 @@ export default function CreateChameleonGame() {
         dispatch(setCurrentPlayer(displayName));
         if (sessionState.socketState === ReadyState.OPEN) {
             dispatch(createGameAsync({displayName, sessionId: sessionState.sessionId}));
+            navigate("/chameleon/lobby");
         } else {
             console.log('websocket not ready');
         }
-        navigate("/chameleon/lobby");
     };
 
     return(

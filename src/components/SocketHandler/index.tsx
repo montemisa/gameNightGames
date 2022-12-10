@@ -2,6 +2,7 @@ import  {  useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import useWebSocket  from 'react-use-websocket';
 import { setSocketState } from '../../reducers/sessionsSlice';
+import { handleGameUpdate } from '../Chameleon/ChameleonSlice';
 
 export default function SocketHandler() {
     const dispatch = useAppDispatch();
@@ -16,6 +17,7 @@ export default function SocketHandler() {
     }
     const onSocketMessage = (evt:any) => {
         console.log('received msg', JSON.parse(evt.data));
+        dispatch(handleGameUpdate(JSON.parse(evt.data)));
     }
     const onSocketError = (evt:any) => {
         console.log('socket error', evt)

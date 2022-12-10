@@ -13,6 +13,13 @@ export const createGame = async (sessionId: string, displayName: string) => {
     }
 };
 
-export const joinGame = async (sessionId: string, gameId: string) => {
-    
+export const joinGame = async (sessionId: string, gameId: string, displayName: string) => {
+    try {
+        const resp = await axios.post(BASE_URL + '/joinGame', {sessionId, displayName, gameId});
+        console.log(resp);
+        return resp.data;
+    } catch(e) {
+        console.log(e);
+        return {};
+    }
 }
