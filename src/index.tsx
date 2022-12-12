@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     element: <CreateChameleonGame />,
   },
   {
-    path: "chameleon/lobby",
+    path: "chameleon/:gameId",
     element: <ChameleonLobby />
   },
   {

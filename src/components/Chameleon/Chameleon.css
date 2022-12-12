@@ -1,0 +1,83 @@
+.chameleon-how-to-play.ul {
+    list-style-type: none;
+    text-align: start;
+}
+
+.chameleon-display-name-input {
+    width: 300px;
+    height: 32px;
+    margin-bottom: 16px;
+}
+
+.chameleon-button {
+    width: 300px;
+    margin-bottom: 12px;
+}
+
+.chameleon-create-input {
+    width: 100%;
+    height: 24px;
+    margin-bottom: 12px;
+}
+
+.chameleon-create-random {
+    margin-bottom: 12px;
+    display: flex;
+    width: 100%;
+    text-align: start;
+}
+
+.chameleon-create-random-label {
+    flex-grow: 1;
+}
+
+.chameleon-lobby-main {
+    display: flex;
+    flex-direction: row;
+}
+
+.chameleon-lobby-main-details {
+    padding: 16px;
+}
+
+.chameleon-lobby-connected {
+    padding: 16px;
+}
+
+.chameleon-lobby-connected ul {
+    padding: 0;
+}
+
+.chameleon-lobby-connected li {
+    list-style: none;
+}
+
+.chameleon-lobby-invite {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.chameleon-lobby-invite p {
+    font-weight: bold;
+    text-align: start;
+    margin: 0;
+}
+
+.chameleon-lobby-invite span {
+    display: flex;
+}
+
+.chameleon-lobby-invite input {
+    height: 32px;
+    flex-grow: 1;
+}
+
+.chameleon-lobby-invite-button {
+    height: 38px;
+}
+
+.chameleon-lobby-start-button {
+    width: 100%;
+    height: 32px;
+}
