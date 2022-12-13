@@ -2,15 +2,27 @@ import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks'
 import { CONNECTION_READY_STATE_DESCRIPTIONS } from '../../constants';
 import { GameStatus, LoadState } from '../../types';
-import { createGameAsync, joinGameAsync, startGameAsync } from './ChameleonSlice';
+import { createGameAsync, joinGameAsync, setCurrentPlayer, setGameId, startGameAsync } from './ChameleonSlice';
 import { setSocketNeeded } from '../../reducers/sessionsSlice';
 import { ReadyState } from 'react-use-websocket';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Toggle from 'react-toggle';
+import Modal from 'react-modal';
+import { ColorRing } from 'react-loader-spinner';
 
 import './Chameleon.css';
 import "react-toggle/style.css"
 
+const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
 
 export default function ChameleonLobby() {
     const dispatch = useAppDispatch();
@@ -20,33 +32,34 @@ export default function ChameleonLobby() {
     const sessionState = useAppSelector((state) => state.sessionState);
     const [customGameId, setCustomGameId] = useState('');
     const [shouldUseRandomWord, setShouldUseRandomWord] = useState(true);
+    const [displayName, setDisplayName] = useState('');
     const gameUrl = "http://d32su7xngve4bg.cloudfront.net/chameleon/" + state.gameId
+    const [showDisplayNameModal, setShowDisplayNameModal] = useState(false);
+
     useEffect(() => {
         if (!sessionState.socketNeeded) {
             console.log(gameId);
             // dispatch(setSocketNeeded(true));
         };
-    }, [sessionState.socketNeeded])
-    
+    }, [sessionState.socketNeeded]);
 
-    // const onCreateGameClick = () => {
-    //     dispatch(setCurrentPlayer(displayName));
-
-    //     if (sessionState.socketState === ReadyState.OPEN) {
-    //         dispatch(createGameAsync({displayName, sessionId: sessionState.sessionId}));
-    //         navigate("/chameleon/lobby");
-    //     } else {
-    //         console.log('websocket not ready');
-    //     }
-    // };
-
-    const onRandomWordToggle = () => {
-        setShouldUseRandomWord(!shouldUseRandomWord);
-    };
+    useEffect(() => {
+        if (state.gameId !== gameId) {
+            dispatch(setGameId(gameId));
+        }
+        if (state.loadState === LoadState.LOADED) {
+            console.log("Came here from create game button do not need to fetch game")
+        } else if (state.loadState === LoadState.INIT) {
+            console.log("Came directly here. Need to join the game");
+            setShowDisplayNameModal(true);
+        } else {
+            console.log("Unexpected state");
+        }
+    }, [])
 
     useEffect(() => {
         if (!sessionState.socketNeeded) {
-            // dispatch(setSocketNeeded(true))
+            dispatch(setSocketNeeded(true))
         }
     }, [sessionState.socketNeeded]);
 
@@ -57,7 +70,7 @@ export default function ChameleonLobby() {
     }, [state.gameStatus]);
 
     useEffect(() => {
-        if (sessionState.socketState === ReadyState.OPEN && state.loadState === LoadState.INIT) {
+        if (sessionState.socketState === ReadyState.OPEN && state.loadState === LoadState.INIT && state.currentPlayer.length >  0) {
             if (state.gameId !== '') {
                 console.log('attempting to join game');
                 dispatch(joinGameAsync({sessionId: sessionState.sessionId, gameId: state.gameId, displayName: state.currentPlayer}))
@@ -66,7 +79,11 @@ export default function ChameleonLobby() {
                 dispatch(createGameAsync({displayName: state.currentPlayer, sessionId: sessionState.sessionId}));
             }
         }
-    }, [sessionState.socketState, state.loadState, state.gameId]);
+    }, [sessionState.socketState, state.loadState, state.gameId, state.currentPlayer]);
+
+    const onRandomWordToggle = () => {
+        setShouldUseRandomWord(!shouldUseRandomWord);
+    };
 
     const onStartGameClick = () => {
         dispatch(startGameAsync({sessionId: sessionState.sessionId, gameId: state.gameId}));
@@ -75,6 +92,18 @@ export default function ChameleonLobby() {
 
     const onCopyUrlClick = () => {
         navigator.clipboard.writeText(gameUrl)
+    }
+
+
+    const closeModal = () => {
+        navigate("/chameleon");
+        setShowDisplayNameModal(false);
+    }
+
+    const joinGame = () => {
+        console.log("Join the game with display name", displayName)
+        setShowDisplayNameModal(false);
+        dispatch(setCurrentPlayer(displayName));
     }
 
     return (
@@ -87,7 +116,15 @@ export default function ChameleonLobby() {
                  </div>
                 <div className='chameleon-lobby-main-details'>
                     <h3>{state.isHost ? <span>Click start game when ready</span> : <span>Waiting for host to start the game...</span>}</h3>
-
+                    <ColorRing
+                        visible={state.loadState === LoadState.LOADING || sessionState.socketState === ReadyState.CONNECTING}
+                        height="80"
+                        width="80"
+                        ariaLabel="blocks-loading"
+                        wrapperStyle={{}}
+                        wrapperClass="blocks-wrapper"
+                        colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+                    />
                     <input 
                         className='chameleon-create-input' 
                         type='text' 
@@ -132,8 +169,24 @@ export default function ChameleonLobby() {
                     <span>The WebSocket is currently {CONNECTION_READY_STATE_DESCRIPTIONS[sessionState.socketState]}</span>
                 </div>
             </div>
-        
-            
+
+            <Modal
+                isOpen={showDisplayNameModal}
+                onRequestClose={closeModal}
+                style={customStyles}
+                contentLabel="Example Modal"
+            >
+                <p>Enter display name to join the game</p>
+                <input 
+                    className='chameleon-create-input' 
+                    type='text' 
+                    placeholder='Display name' 
+                    value={displayName} 
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setDisplayName(e.target.value)}
+                />
+                <button onClick={closeModal}>close</button>
+                <button onClick={joinGame}>Join game</button>
+            </Modal>
         </div>
     );
 }
