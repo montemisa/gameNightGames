@@ -41,8 +41,8 @@ export const joinGameAsync = createAsyncThunk(
 
 export const startGameAsync = createAsyncThunk(
   'chameleonGameState/startGame',
-  async (req: {sessionId: string, gameId: string}) => {
-      const resp = await startGame(req.sessionId, req.gameId);
+  async (req: {sessionId: string, gameId: string, customWord: string}) => {
+      const resp = await startGame(req.sessionId, req.gameId, req.customWord);
       return resp;
   }
 );
@@ -70,6 +70,9 @@ export const chameleonSlice = createSlice({
         handleGameUpdate: onGameUpdate,
         setGameId: (state, action) => {
           state.gameId = action.payload;
+        },
+        resetGameState: (state) => {
+          state = initialState;
         },
     },
     extraReducers: (builder) => {
@@ -108,6 +111,6 @@ export const chameleonSlice = createSlice({
       },
 });
 
-export const { setCurrentPlayer, handleGameUpdate, setGameId } = chameleonSlice.actions;
+export const { setCurrentPlayer, handleGameUpdate, setGameId, resetGameState } = chameleonSlice.actions;
 
 export default chameleonSlice.reducer;

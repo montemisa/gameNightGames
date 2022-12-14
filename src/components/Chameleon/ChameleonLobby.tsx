@@ -32,6 +32,7 @@ export default function ChameleonLobby() {
     const sessionState = useAppSelector((state) => state.sessionState);
     const [customGameId, setCustomGameId] = useState('');
     const [shouldUseRandomWord, setShouldUseRandomWord] = useState(true);
+    const [customWord, setCustomWord] = useState('');
     const [displayName, setDisplayName] = useState('');
     const gameUrl = "http://d32su7xngve4bg.cloudfront.net/chameleon/" + state.gameId
     const [showDisplayNameModal, setShowDisplayNameModal] = useState(false);
@@ -86,7 +87,12 @@ export default function ChameleonLobby() {
     };
 
     const onStartGameClick = () => {
-        dispatch(startGameAsync({sessionId: sessionState.sessionId, gameId: state.gameId}));
+        let startRequest = {
+            sessionId: sessionState.sessionId,
+            gameId: state.gameId,
+            customWord,
+        };
+        dispatch(startGameAsync(startRequest));
         console.log('starting game');
     }
 
@@ -148,7 +154,9 @@ export default function ChameleonLobby() {
                     {!shouldUseRandomWord && <input 
                         className='chameleon-create-input'
                         type='text' 
-                        placeholder='Enter secret word' 
+                        placeholder='Enter secret word'
+                        value={customWord}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomWord(e.target.value)}
                     />}
                     <div className="chameleon-lobby-invite">
                        <p>Invite others using this link:  </p>

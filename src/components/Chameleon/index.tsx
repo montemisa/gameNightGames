@@ -1,6 +1,6 @@
 import React, {useEffect, useState, ChangeEvent} from 'react';
 import {useAppDispatch} from '../../hooks';
-import {createGameAsync,  setCurrentPlayer} from './ChameleonSlice';
+import {createGameAsync,  setCurrentPlayer, resetGameState} from './ChameleonSlice';
 import { useNavigate } from "react-router-dom";
 import { ReadyState } from 'react-use-websocket';
 import { useAppSelector } from '../../hooks';
@@ -22,7 +22,11 @@ export default function Chameleon() {
         if (!sessionState.socketNeeded) {
             dispatch(setSocketNeeded(true));
         };
-    }, [sessionState.socketNeeded])
+    }, [sessionState.socketNeeded]);
+
+    useEffect(() => {
+        dispatch(resetGameState());
+    }, []);
 
     useEffect(() => {
         // From this page game state should only get to loaded after they click
