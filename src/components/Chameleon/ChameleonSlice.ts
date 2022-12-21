@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { LoadState, GameStatus,  PlayerInfo, JoinGameRequest } from '../../types';
-import { createGame, joinGame, startGame } from '../../api/chameleonGame';
+import { createGame, joinGame, startGame, setCustomGameId } from '../../api/chameleonGame';
 
 
 interface ChameleonState {
@@ -45,6 +45,14 @@ export const startGameAsync = createAsyncThunk(
       const resp = await startGame(req.sessionId, req.gameId, req.customWord);
       return resp;
   }
+);
+
+export const setCustomGameIdAsync = createAsyncThunk(
+  'chameleonGameState/customGameId',
+  async (req: {sessionId: string, gameId: string, customGameId: string}) => {
+    const resp = await setCustomGameId(req.sessionId, req.gameId, req.customGameId);
+    return resp;
+}
 );
 
 const onGameUpdate = (state: any, action: { payload: any; type: string; }) => {

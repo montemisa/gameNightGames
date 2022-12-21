@@ -1,7 +1,7 @@
 import React, {useEffect, useState, ChangeEvent} from 'react';
 import {useAppDispatch} from '../../hooks';
 import {createGameAsync,  setCurrentPlayer, resetGameState} from './ChameleonSlice';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ReadyState } from 'react-use-websocket';
 import { useAppSelector } from '../../hooks';
 import { setSocketNeeded } from '../../reducers/sessionsSlice';
@@ -16,7 +16,7 @@ export default function Chameleon() {
     const [gameIdToJoin, setGameIdToJoin] = useState('');
     const sessionState = useAppSelector((state) => state.sessionState);
     const gameState = useAppSelector((state) => state.chameleonState);
-
+    const location = useLocation();
 
     useEffect(() => {
         if (!sessionState.socketNeeded) {
@@ -25,6 +25,13 @@ export default function Chameleon() {
     }, [sessionState.socketNeeded]);
 
     useEffect(() => {
+        console.log(location)
+    },[location]);
+
+
+
+    useEffect(() => {
+        // Need to clear out any previous game states on initial load of this page.
         dispatch(resetGameState());
     }, []);
 
@@ -32,7 +39,7 @@ export default function Chameleon() {
         // From this page game state should only get to loaded after they click
         // create game so we forward them to the lobby after
         if (gameState.loadState === LoadState.LOADED) {
-            navigate("/chameleon/" + gameState.gameId);
+            navigate("/chameleon/" + gameState.gameId,{replace:false});
         }
     }, [gameState.loadState]);
 

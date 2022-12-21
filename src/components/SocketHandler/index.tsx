@@ -3,11 +3,14 @@ import {useAppDispatch, useAppSelector} from '../../hooks';
 import useWebSocket  from 'react-use-websocket';
 import { setSocketState } from '../../reducers/sessionsSlice';
 import { handleGameUpdate } from '../Chameleon/ChameleonSlice';
+// import { useLocation } from 'react-router-dom';
 
 export default function SocketHandler() {
     const dispatch = useAppDispatch();
-    const socketUrl = 'wss://7ts72qhc81.execute-api.us-west-2.amazonaws.com/production';
+    const socketUrl = 'wss://bkq8bd27q8.execute-api.us-west-2.amazonaws.com/development';
     const sessionState = useAppSelector(state => state.sessionState);
+    // const location = useLocation();
+
 
     const onSocketOpen = (evt:any) => {
         console.log(evt);
@@ -39,6 +42,7 @@ export default function SocketHandler() {
     useEffect(() => {
         dispatch(setSocketState(readyState));
     }, [readyState]);
+    
 
     return(<></>);
 }

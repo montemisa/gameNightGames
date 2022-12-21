@@ -1,11 +1,11 @@
-import React, { useEffect, useState, ChangeEvent } from 'react';
+import React, { useEffect, useState, ChangeEvent,FocusEventHandler } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks'
 import { CONNECTION_READY_STATE_DESCRIPTIONS } from '../../constants';
 import { GameStatus, LoadState } from '../../types';
 import { createGameAsync, joinGameAsync, setCurrentPlayer, setGameId, startGameAsync } from './ChameleonSlice';
 import { setSocketNeeded } from '../../reducers/sessionsSlice';
 import { ReadyState } from 'react-use-websocket';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 import Toggle from 'react-toggle';
 import Modal from 'react-modal';
 import { ColorRing } from 'react-loader-spinner';
@@ -27,6 +27,7 @@ const customStyles = {
 export default function ChameleonLobby() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const { gameId } = useParams();
     const state = useAppSelector((state) => state.chameleonState);
     const sessionState = useAppSelector((state) => state.sessionState);
@@ -38,20 +39,11 @@ export default function ChameleonLobby() {
     const [showDisplayNameModal, setShowDisplayNameModal] = useState(false);
 
     useEffect(() => {
-        if (!sessionState.socketNeeded) {
-            console.log(gameId);
-            // dispatch(setSocketNeeded(true));
-        };
-    }, [sessionState.socketNeeded]);
-
-    useEffect(() => {
         if (state.gameId !== gameId) {
             dispatch(setGameId(gameId));
         }
         if (state.loadState === LoadState.LOADED) {
-            console.log("Came here from create game button do not need to fetch game")
         } else if (state.loadState === LoadState.INIT) {
-            console.log("Came directly here. Need to join the game");
             setShowDisplayNameModal(true);
         } else {
             console.log("Unexpected state");
@@ -66,17 +58,15 @@ export default function ChameleonLobby() {
 
     useEffect(() => {
         if (state.gameStatus === GameStatus.STARTED) {
-            navigate("/chameleon/play");
+            navigate(`/chameleon/${gameId}/play`);
         }
     }, [state.gameStatus]);
 
     useEffect(() => {
         if (sessionState.socketState === ReadyState.OPEN && state.loadState === LoadState.INIT && state.currentPlayer.length >  0) {
             if (state.gameId !== '') {
-                console.log('attempting to join game');
                 dispatch(joinGameAsync({sessionId: sessionState.sessionId, gameId: state.gameId, displayName: state.currentPlayer}))
             } else {
-                console.log('attempting to create game');
                 dispatch(createGameAsync({displayName: state.currentPlayer, sessionId: sessionState.sessionId}));
             }
         }
@@ -93,7 +83,6 @@ export default function ChameleonLobby() {
             customWord,
         };
         dispatch(startGameAsync(startRequest));
-        console.log('starting game');
     }
 
     const onCopyUrlClick = () => {
@@ -107,10 +96,11 @@ export default function ChameleonLobby() {
     }
 
     const joinGame = () => {
-        console.log("Join the game with display name", displayName)
         setShowDisplayNameModal(false);
         dispatch(setCurrentPlayer(displayName));
     }
+
+    
 
     return (
         <div className="App">
@@ -137,6 +127,7 @@ export default function ChameleonLobby() {
                         placeholder='Enter custom room id (Optional)' 
                         value={customGameId} 
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setCustomGameId(e.target.value)}
+                        onBlur={(e:any) => console.log(e)}
                     />
                     <div className='chameleon-create-random'>
                         <label 

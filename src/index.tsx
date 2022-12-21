@@ -14,31 +14,46 @@ import {
   createBrowserRouter,
   RouterProvider,
   Route,
+  createRoutesFromElements
 } from "react-router-dom";
 import ChameleonLobby from './components/Chameleon/ChameleonLobby';
+import Home from './components/Home';
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "chameleon",
-    element: <Chameleon />,
-  },
-  {
-    path: "chameleon/create",
-    element: <CreateChameleonGame />,
-  },
-  {
-    path: "chameleon/:gameId",
-    element: <ChameleonLobby />
-  },
-  {
-    path: "chameleon/play",
-    element: <ChameleonGamePlay />
-  }
-]);
+
+const router =  createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Home />}>
+      <Route index element={<App />} />
+      <Route path='/chameleon' element={<Chameleon />}  />
+      <Route path="/chameleon/:gameId"  element={<ChameleonLobby />} />
+      <Route path="/chameleon/:gameId/play" element={<ChameleonGamePlay/>}  />
+      </Route>))
+
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <App />,
+//     children: [
+
+    
+  
+//   {
+//     path: "/chameleon",
+//     element: <Chameleon />,
+//   },
+//   {
+//     path: "chameleon/create",
+//     element: <CreateChameleonGame />,
+//   },
+//   {
+//     path: "chameleon/:gameId",
+//     element: <ChameleonLobby />
+//   },
+//   {
+//     path: "chameleon/play",
+//     element: <ChameleonGamePlay />
+//   }]},
+// ]);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

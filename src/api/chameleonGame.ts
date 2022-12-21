@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://je1iw7ddle.execute-api.us-west-2.amazonaws.com';
+const BASE_URL = 'https://5yy2e32bl0.execute-api.us-west-2.amazonaws.com';
 
 export const createGame = async (sessionId: string, displayName: string) => {
     try {
-        const resp = await axios.post(BASE_URL + '/createGame', {sessionId, displayName});
-        console.log(resp);
+        const resp = await axios.post(BASE_URL + '/chameleon', {sessionId, displayName});
         return resp.data;
     } catch(e) {
         console.log(e);
@@ -15,8 +14,7 @@ export const createGame = async (sessionId: string, displayName: string) => {
 
 export const joinGame = async (sessionId: string, gameId: string, displayName: string) => {
     try {
-        const resp = await axios.post(BASE_URL + '/joinGame', {sessionId, displayName, gameId});
-        console.log(resp);
+        const resp = await axios.put(BASE_URL + '/chameleon/' + gameId, {sessionId, displayName});
         return resp.data;
     } catch(e) {
         console.log(e);
@@ -26,8 +24,17 @@ export const joinGame = async (sessionId: string, gameId: string, displayName: s
 
 export const startGame = async (sessionId:string, gameId: string, customWord: string) => {
     try {
-        const resp = await axios.post(BASE_URL + '/startGame', {sessionId, gameId, customWord});
-        console.log(resp);
+        const resp = await axios.put(BASE_URL + '/chameleon/' + gameId + '/start', {sessionId, customWord});
+        return resp.data;
+    } catch(e) {
+        console.log(e);
+        return {};
+    }
+}
+
+export const setCustomGameId = async (sessionId:string, gameId: string, customGameId: string) => {
+    try {
+        const resp = await axios.post(BASE_URL + '/customGameId', {sessionId, gameId, customGameId});
         return resp.data;
     } catch(e) {
         console.log(e);
