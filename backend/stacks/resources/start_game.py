@@ -66,17 +66,18 @@ def lambda_handler(event, context):
     cp['word'] = 'Chameleon'
     game['gameStatus'] = 'STARTED'
     game['createdAt'] = 0
+
+    table.put_item(Item=game)
+
     
     msg = {
-        "message_type": "GAME_UPDATE",
+        "message_type": "START_GAME",
         "game": game
     }
     sqs.send_message(
         QueueUrl=queueUrl,
         MessageBody=json.dumps(msg)
     )
-    
-    table.put_item(Item=game)
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')

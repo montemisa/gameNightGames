@@ -3,11 +3,11 @@ import boto3
 import secrets
 import time
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('Sessions')
+
 
 def lambda_handler(event, context):
-    
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('Sessions')
     sessionId = secrets.token_hex(16)
     
     session = {

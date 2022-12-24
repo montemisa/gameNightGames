@@ -31,7 +31,7 @@ class HttpApiService(Construct):
         sqs_event_source = lambda_event_sources.SqsEventSource(game_update_queue)
 
         dynamo_policy = iam.PolicyStatement( # Restrict to listing and describing tables
-            actions=["dynamodb:PutItem", "dynamodb:GetItem"],
+            actions=["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Query"],
             resources=["*"]
         )
 
@@ -142,7 +142,7 @@ class HttpApiService(Construct):
         )
 
         http_api.add_routes(
-            path="/chameleon/:gameId",
+            path="/chameleon/{gameId}",
             methods=[HttpMethod.PUT],
             integration=join_game_integration
         )

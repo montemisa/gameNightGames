@@ -24,7 +24,14 @@ export const joinGame = async (sessionId: string, gameId: string, displayName: s
 
 export const startGame = async (sessionId:string, gameId: string, customWord: string) => {
     try {
-        const resp = await axios.put(BASE_URL + '/chameleon/' + gameId + '/start', {sessionId, customWord});
+        let request: {sessionId: string, customWord?: string} = {sessionId};
+        if (customWord.length > 0 ){
+            request = {
+                ...request,
+                customWord
+            };
+        }
+        const resp = await axios.put(BASE_URL + '/chameleon/' + gameId + '/start', request);
         return resp.data;
     } catch(e) {
         console.log(e);
