@@ -121,7 +121,7 @@ export default function ChameleonLobby() {
                         wrapperClass="blocks-wrapper"
                         colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
                     />
-                    <input 
+                    {state.isHost && <><input 
                         className='chameleon-create-input' 
                         type='text' 
                         placeholder='Enter custom room id (Optional)' 
@@ -157,14 +157,14 @@ export default function ChameleonLobby() {
                         </span>
                        
                     </div>
-                    {
-                        state.isHost &&
+                    
+                        
                         <button 
                             className="chameleon-lobby-start-button"
                             onClick={onStartGameClick}
                         >
                             Start game
-                        </button>}
+                        </button></>}
                     <span>The WebSocket is currently {CONNECTION_READY_STATE_DESCRIPTIONS[sessionState.socketState]}</span>
                 </div>
             </div>

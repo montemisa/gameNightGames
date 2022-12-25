@@ -53,3 +53,6 @@ class WebSocketApiService(Construct):
             stage_name="development",
             auto_deploy=True
         )
+
+        self.websocket_stage.grant_management_api_access(websocket_connect_lambda)
+        websocket_connect_lambda.add_environment("websocket_url", self.websocket_stage.callback_url)

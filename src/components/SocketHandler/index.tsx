@@ -10,6 +10,7 @@ export default function SocketHandler() {
     const socketUrl = 'wss://bkq8bd27q8.execute-api.us-west-2.amazonaws.com/development';
     const sessionState = useAppSelector(state => state.sessionState);
     // const location = useLocation();
+    const gameId = useAppSelector((state) => state.chameleonState.gameId);
 
 
     const onSocketOpen = (evt:any) => {
@@ -32,7 +33,8 @@ export default function SocketHandler() {
         onError: onSocketError,
         onMessage: onSocketMessage, 
         queryParams: {
-            sessionId: sessionState.sessionId
+            sessionId: sessionState.sessionId,
+            gameId,
         },
         shouldReconnect: (evt:any) => true,
     }

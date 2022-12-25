@@ -90,7 +90,7 @@ export default function Scorekeeper() {
             <button className="scorekeeper-add-button" onClick={onAddPlayer}>Add player</button>
             <button className="scorekeeper-enter-scores-button">Enter scores</button>
             <button className="scorekeeper-next-round-button" onClick={onNextRoundClick}>Next round</button>
-            <button className="scorekeeper-enter-scores-button" onClick={}
+            {/* <button className="scorekeeper-enter-scores-button" onClick={} */}
             <Modal
                 isOpen={playerEditIndex !== undefined}
                 onRequestClose={onCloseModal}
