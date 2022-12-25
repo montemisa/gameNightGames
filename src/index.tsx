@@ -18,6 +18,7 @@ import {
 } from "react-router-dom";
 import ChameleonLobby from './components/Chameleon/ChameleonLobby';
 import Home from './components/Home';
+import Scorekeeper from './components/Scorekeeper';
 
 
 const router =  createBrowserRouter(
@@ -27,6 +28,7 @@ const router =  createBrowserRouter(
       <Route path='/chameleon' element={<Chameleon />}  />
       <Route path="/chameleon/:gameId"  element={<ChameleonLobby />} />
       <Route path="/chameleon/:gameId/play" element={<ChameleonGamePlay/>}  />
+      <Route path="/scorekeeper" element={<Scorekeeper />} />
       </Route>))
 
 // const router = createBrowserRouter([
