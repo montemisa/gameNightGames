@@ -1,0 +1,39 @@
+.scorekeeper-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.scorekeeper-container table {
+    min-width: 300px;
+}
+
+.scorekeeper-edit-buttons button {
+    margin: 8px;
+    flex-grow: 1;
+}
+
+td, th {
+    padding: 0 8px;
+    height: 32px;
+}
+
+.scorekeeper-score-cell {
+    text-align: right;
+}
+
+tbody tr:nth-child(2n + 1) {
+    background: rgb(220, 220, 220);
+}
+
+tbody tr:nth-child(2n) {
+    background: rgb(200, 200, 200);
+}
+
+.scorekeeper-round-name:hover {
+    cursor: pointer;
+}
+
+.scorekeeper-player-name:hover {
+    cursor: pointer;
+}
