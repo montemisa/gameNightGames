@@ -6,7 +6,7 @@ class DynamoService(Construct):
     def __init__(self, scope: Construct, id: str):
         super().__init__(scope, id)
 
-        sessions_table = dynamodb.CfnTable(
+        self.sessions_table = dynamodb.CfnTable(
             self, 
             "UserSessions",
             table_name="Sessions",
@@ -22,7 +22,7 @@ class DynamoService(Construct):
         )
 
 
-        games_table = dynamodb.CfnTable(
+        self.games_table = dynamodb.CfnTable(
             self,
             "ChameleonGames",
             table_name="ChameleonGames",

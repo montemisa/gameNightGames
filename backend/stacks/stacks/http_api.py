@@ -7,10 +7,10 @@ from aws_cdk import (aws_lambda as lambda_,
                     )
 from aws_cdk.aws_apigatewayv2_integrations_alpha import HttpLambdaIntegration
 from aws_cdk.aws_apigatewayv2_alpha import (HttpApi, CorsPreflightOptions, CorsHttpMethod, HttpMethod, WebSocketStage)
-
+from . import dynamo_tables
 
 class HttpApiService(Construct):
-    def __init__(self, scope: Construct, id: str, websocketStage: WebSocketStage):
+    def __init__(self, scope: Construct, id: str, websocket_stage: WebSocketStage, dynamo_service: dynamo_tables.DynamoService):
         super().__init__(scope, id)
 
         http_api = HttpApi(
@@ -42,6 +42,7 @@ class HttpApiService(Construct):
             code=lambda_.Code.from_asset("resources"),
             handler="create_session.lambda_handler",
             initial_policy=[dynamo_policy],
+            environment={"SESSIONS_TABLE_NAME": dynamo_service.sessions_table.table_name}
         )
         create_session_integration = HttpLambdaIntegration(
             "CreateSessionIntegration",
@@ -57,7 +58,8 @@ class HttpApiService(Construct):
             initial_policy=[iam.PolicyStatement(
                 actions=["dynamodb:GetItem"],
                 resources=["*"]
-            )]
+            )],
+            environment={"SESSIONS_TABLE_NAME": dynamo_service.sessions_table.table_name}
         )
 
         validate_session_integration = HttpLambdaIntegration(
@@ -116,12 +118,12 @@ class HttpApiService(Construct):
             code=lambda_.Code.from_asset("resources"),
             handler="broadcast_game_update.lambda_handler",
             initial_policy=[dynamo_policy],
-            environment={"websocket_url": websocketStage.callback_url}
+            environment={"websocket_url": websocket_stage.callback_url}
         )
 
         game_update_handler.add_event_source(sqs_event_source)
         game_update_queue.grant_consume_messages(game_update_handler)
-        websocketStage.grant_management_api_access(game_update_handler)
+        websocket_stage.grant_management_api_access(game_update_handler)
 
         http_api.add_routes(
             path="/session/validate",
