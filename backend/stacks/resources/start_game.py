@@ -71,9 +71,10 @@ def lambda_handler(event, context):
 
     
     msg = {
-        "message_type": "START_GAME",
+        "message_type": "GAME_UPDATE",
         "game": game
     }
+    
     sqs.send_message(
         QueueUrl=queueUrl,
         MessageBody=json.dumps(msg)

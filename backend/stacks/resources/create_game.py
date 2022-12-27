@@ -73,7 +73,7 @@ def lambda_handler(event, context):
                 'isHost': True
             }
         ],
-        "gameStatus": "WAITING_FOR_PLAYERS",
+        "gameStatus": "LOBBY",
         "createdAt": int(round(time.time()))
     }
     

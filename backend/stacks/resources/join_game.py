@@ -90,7 +90,7 @@ def lambda_handler(event, context):
     table.put_item(Item=game)
     game.pop('createdAt', None)
     msg = {
-        "message_type": "JOIN_GAME",
+        "message_type": "GAME_UPDATE",
         "game": game
     }
     sqs.send_message(

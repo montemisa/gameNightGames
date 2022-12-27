@@ -16,7 +16,6 @@ def lambda_handler(event, context):
     for record in event["Records"]:
         body = json.loads(record["body"])
         
-        
         if 'game' not in body:
             print("No game provided: ", record)
    
@@ -26,10 +25,11 @@ def lambda_handler(event, context):
         connectedPlayers = [
             {
                 'displayName': cp.get('displayName'),
-                'isHost': cp.get('isHost', False)
+                'isHost': cp.get('isHost', False),
             } for cp in game.get('connectedPlayers', [])
         ]
-        gameState = {
+
+        game_state = {
             'gameId': game['gameId'],
             'gameStatus': game.get('gameStatus', "UNKNOWN"),
             'connectedPlayers': connectedPlayers
@@ -42,19 +42,15 @@ def lambda_handler(event, context):
                 print('Could not find {0} or no websocket', cp['sessionId'])
             
             websocketId = resp['Item']['websocketId']
-            try:
-                if body["message_type"] == "JOIN_GAME":
-                    gameState['messageType'] = 2
-                    msg = gameState
-                elif body["message_type"] == "START_GAME":
-                    msg = {
-                        'word': cp['word'],
-                        'messageType': 1,
-                    }
-                print("Writing to {0}: {1}".format(websocketId, msg))
-                client.post_to_connection(ConnectionId=websocketId, Data=json.dumps(msg).encode('utf-8'))
-            except:
+            try:                    
+                game_state['messageType'] = "GAME_UPDATE"
+                game_state['recepientSessionId'] = cp['sessionId']
+                game_state['word'] = cp['word'] if 'word' in cp else ''
+                print("Writing to {0}: {1}".format(websocketId, game_state))
+                client.post_to_connection(ConnectionId=websocketId, Data=json.dumps(game_state).encode('utf-8'))
+            except Exception as e:
                 print("Error writing to {0} for player: {1}".format(cp.get('websocketId'), cp.get('displayName')))
+                print("Exception ", str(e))
 
     return {
         'statusCode': 200,
